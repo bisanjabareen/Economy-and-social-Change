@@ -1,0 +1,21 @@
+name: Build LaTeX Document
+on: [push] # The Trigger (Step 2)
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX document # The Logic (Step 3)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex # Make sure your file is named main.tex
+
+      - name: Upload PDF to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_files: summary.pdf
