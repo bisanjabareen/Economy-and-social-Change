@@ -2,45 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=summary.pdf" />
-  <title>Economy and Social Change – Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bisan's Notes</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
+      background: #0f1117;
+      color: #e2e8f0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background: #f5f5f5;
-      color: #333;
+      padding: 4rem 1.5rem;
     }
-    .card {
+
+    header {
       text-align: center;
-      background: white;
-      padding: 2.5rem 3rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      margin-bottom: 3rem;
     }
-    h1 { font-size: 1.4rem; margin: 0 0 0.5rem; }
-    p  { color: #666; margin: 0 0 1.5rem; font-size: 0.95rem; }
-    a  {
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    table {
+      width: 100%;
+      max-width: 640px;
+      border-collapse: collapse;
+      background: #1e2130;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    thead tr {
+      background: #252a3d;
+    }
+
+    thead th {
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    tbody tr {
+      border-top: 1px solid #2d3348;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover {
+      background: #252a3d;
+    }
+
+    tbody td {
+      padding: 1rem 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    tbody td.doc-name {
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    tbody td.doc-desc {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    tbody td.doc-action {
+      text-align: right;
+    }
+
+    a.open-btn {
       display: inline-block;
-      background: #1a56db;
+      background: #3b82f6;
       color: white;
-      padding: 0.6rem 1.4rem;
+      padding: 0.4rem 1rem;
       border-radius: 6px;
       text-decoration: none;
+      font-size: 0.85rem;
       font-weight: 500;
+      transition: background 0.15s;
     }
-    a:hover { background: #1446b8; }
+
+    a.open-btn:hover {
+      background: #2563eb;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Economy and Social Change</h1>
-    <p>Redirecting to the course summary PDF…</p>
-    <a href="summary.pdf">Open PDF →</a>
-  </div>
+  <header>
+    <h1>Bisan's Notes</h1>
+    <p>Course summaries and documents</p>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Document</th>
+        <th>Description</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="doc-name">Summary</td>
+        <td class="doc-desc">Economy and Social Change</td>
+        <td class="doc-action"><a class="open-btn" href="summary.pdf">Open PDF</a></td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>
