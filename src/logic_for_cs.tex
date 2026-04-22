@@ -1,0 +1,543 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{polyglossia}
+\setmainlanguage{hebrew}
+\setotherlanguage{english}
+\usepackage{fontspec}
+\newfontfamily\hebrewfont[Script=Hebrew]{David CLM}
+\newfontfamily\hebrewfontsf[Script=Hebrew]{Miriam CLM}
+\setmainfont[Script=Hebrew]{David CLM}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{microtype}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\itshape}{}{0em}{}
+
+\title{לוגיקה למדעי המחשב}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%---------------------------------------------------------------------
+\section*{הרצאה 1:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``If I could begin to be half of what you think of me, I could do about anything\ldots\ I could even learn how to love''}
+\end{quote}
+
+\ldots\ (תכונות ל $X_{B,F}$)
+
+%---------------------------------------------------------------------
+\section*{הרצאה 2:}
+%---------------------------------------------------------------------
+
+\textenglish{``I gave my trust, I shed my blood. I held on tight just to end up stung\ldots\ you were my friend- scorpion!''}
+
+בהנתן עולם $W$ ובסיס $B$ וקבוצת פונקציות מעל $W$, הקבוצה $X_{B,F}$ קיימת ויחידה.
+\textcolor{red}{כלומר כאשר מתארים קבוצה אינדוקטיבית מספיק להצביע על השלשה הזו.}
+
+איך מראים שקבוצה היא $X_{B,F}$? מראים לפי ההגדרה\ldots\ או משתמשים בהגדרות השקולות הבאות:
+
+$X_{B,F}=\bigcap\{T\subset W \mid B\subset T \text{ and } T \text{ is closed under } W\}$
+
+נגדיר: $D_{0}=B,\ D_{1}=D_{0}\cup F(D_{0}),\ldots,\ D_{i}=D_{i-1}\cup F(D_{i-1}),\ldots$, עתה: $X_{B,F}=\bigcup_{i\in\mathbb{N}}D_{i}$
+
+\subsection*{תחשיב הפסוקים:}
+
+נגדיר קבוצות:
+
+$Var=\{p_{i} \mid i\in\mathbb{N}\}$
+
+$Symb=\{\wedge,\vee,\rightarrow,\lnot,(,)\}$
+
+$W=(Var\cup Symb)^{*}$
+
+$B=Var$
+
+$F=\{F_{\lnot},\ldots\}$
+
+$WFF=X_{B,F}$ תיקרא תחשיב הפסוקים.
+
+בפרט:
+
+אם רוצים להראות שתחשיב הפסוקים אמ''מ משהו (תכונה) יש להראות לפי ההגדרה או השקילויות.
+
+אם רוצים להראות שתחשיב הפסוקים מקיימת תכונה מסויימת צריך להראות את זה על ידי אינדוקציית מבנה.
+
+אם רוצים להראות שאיבר שייך לתחשיב הפסוקים צריך להראות סדרת יצירה לאיבר!
+
+ועוד\ldots
+
+\subsection*{משפט הקריאה היחידה}
+
+\ldots
+
+\subsection*{סמנטיקה של תחשיב הפסוקים:}
+
+נגדיר השמה $z:Var\rightarrow\{0,1\}$.
+$Ass=\{z \mid z:Var\rightarrow\{0,1\}\}$
+
+%---------------------------------------------------------------------
+\section*{הרצאה 3:}
+%---------------------------------------------------------------------
+
+\begin{quotation}
+\textenglish{``There's no time, we're losing the light''}
+\end{quotation}
+
+נגדיר השמה מורחבת $\overline{z}$ מעל $WFF$ בצורה אינדוקטיבית:
+
+לכל $v\in Var$: $\exists i\in\mathbb{N},\ \overline{z}(v)=z(v)=z(p_{i})$
+
+סגור: \ldots
+
+משפט התלות הסופית: בהנתן פסוק $\alpha$ ושתי השמות $z_{1},z_{2}$ שמקיימות $z_{1}(p_{i})=z_{2}(p_{i})$ לכל אטום המופיע בפסוק, אזי $z_{1}\vDash\alpha\iff z_{2}\vDash\alpha$.
+
+בצורה הזו, פסוק מתאר טבלת אמת.
+
+\emph{האם לכל טבלת אמת קיים פסוק שמתאר אותה?}
+
+\textcolor{blue}{לא! אבל תחת תנאים מסויימים, כן.}
+
+\textbf{הגדרה:} מערכת קשרים שעבורה מתקיים שלכל טבלת אמת יש פסוק שמתאר אותה נקראת מערכת קשרים שלמה.
+
+\textcolor{red}{יש לחזור על הדוגמאות מההרצאה + הוכחות שמערכת קשרים היא שלמה או לא.}
+
+%---------------------------------------------------------------------
+\section*{הרצאה 4:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+``אם ביחד, אז רק לחוד''
+\end{quote}
+
+פסוק $\alpha$ נקרא טאוטולוגיה או אמת לוגית אם לכל השמה $z$ מתקיים $z\vDash\alpha$.
+
+\textbf{איך נראה שפסוק הוא טאואולוגיה? טבלת אמת (משפט התלות הסופית) או הנחה בשלילה.}
+
+\underline{טענה:} $\alpha$ סתירה אמ''מ $\lnot\alpha$ טאוטולוגיה. $\alpha$ טאוטולוגיה אמ''מ $\lnot\alpha$ סתירה.
+
+דוגמאות חשובות לטאוטולוגיות:
+
+$\alpha\rightarrow(\beta\rightarrow\alpha)$
+
+$\alpha\rightarrow(\beta\rightarrow\gamma)\rightarrow((\alpha\rightarrow\beta)\rightarrow(\alpha\rightarrow\gamma))$
+
+$(\lnot\beta\rightarrow\lnot\alpha)\rightarrow(\alpha\rightarrow\beta)$
+
+\subsubsection*{נביעה לוגית:}
+
+נאמר שפסוק $\beta$ נובע לוגית מפסוק $\alpha$ אם לכל השמה $z$ מתקיים: אם $z\vDash\alpha$ אז $z\vDash\beta$. ונסמן $\alpha\vDash\beta$.
+
+\underline{טענה:} $\alpha\vDash\beta$ אמ''מ $\vDash\alpha\rightarrow\beta$.
+
+\subsubsection*{שקילות לוגית}
+
+נאמר ששני פסוקים $\alpha,\beta$ שקולים לוגית אם $\alpha\vDash\beta$ וגם $\beta\vDash\alpha$.
+
+אינטואיציה: פסוקים שקולים הם פסוקים שמספרים ``אותו הסיפור''. בפרט, כל פסוק שקול לעצמו.
+
+\subsubsection*{הרחבת המושגים לקבוצות של פסוקים:}
+
+קבוצת פסוקים $\Sigma$ תיקרא ספיקה אם: $\exists z,\forall\alpha\in\Sigma,\ z\vDash\alpha$. קבוצת פסוקים יכולה להיות אינסופית ויכולה להיות ריקה. בפרט עבור קבוצת פסוקים ריקה היא ספיקה, וכל ההשמות ($Ass$) מספקות אותה.
+
+\textbf{אינטואיציה: $\land$ על כל הפסוקים. ונותן לנו דרך לבטא את זה במקרה האינסופי. בפרט עבור קבוצה סופית ניתן לבטא אותה על ידי $\underset{\alpha\in X}{\bigwedge}\alpha$ (ורק עבור סופית!). אם הקבוצה ריקה אז הביטוי לא מוגדר.}
+
+יש גם הגדרות לשקילות קבוצות פסוקים ולגרירה לוגית לפסוק מקבוצה.
+
+\subsubsection*{טענות נוספות:}
+
+\begin{enumerate}
+  \item $X\cup\{\alpha\}\vDash\beta$ אמ''מ $X\vDash\alpha\rightarrow\beta$.
+  \item אם $X\cup\{\alpha\}\vDash\beta$ וגם $X\vDash\alpha$ אז $X\vDash\beta$.
+  \item אם $X\cup\{\alpha\}\vDash\beta$ וגם $X\cup\{\lnot\alpha\}\vDash\beta$ אזי $X\vDash\beta$.
+  \item אם $X\vDash\beta$ וגם $X\vDash\lnot\beta$ אז $X$ לא ספיקה.
+  \item אם $X\cup\{\lnot\alpha\}\vDash\beta$ וגם $X\cup\{\lnot\alpha\}\vDash\lnot\beta$ אז $X\vDash\alpha$.
+\end{enumerate}
+
+ויש עוד\ldots\ (3)
+
+\underline{הערה (1):} קבוצת ההשמות המספקות קבוצה $\Sigma$ מסומנת על ידי $M(\Sigma)$.
+
+\underline{הערה (2):} הרצאה מעניינת :(
+
+%---------------------------------------------------------------------
+\section*{הרצאה 5:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``And is all that I might owe you carved on ivory?''}
+\end{quote}
+
+\subsection*{מערכת הוכחה שלמה}
+
+\underline{הגדרה:} מעל העולם $WFF_{\{\lnot,\rightarrow\}}$ וקבוצת פעולות $F=\{MP\}$ וקבוצת בסיס $B$ נגדיר קבוצה אינדוקטיבית בצורה הבאה:
+
+בסיס $B$: אקסיומות
+
+יהיו $\alpha,\beta,\gamma\in WFF_{\{\lnot,\rightarrow\}}$:
+
+$\alpha\rightarrow(\beta\rightarrow\alpha)\in B$
+
+$\alpha\rightarrow(\beta\rightarrow\gamma)\rightarrow((\alpha\rightarrow\beta)\rightarrow(\alpha\rightarrow\gamma))\in B$
+
+$(\lnot\beta\rightarrow\lnot\alpha)\rightarrow(\alpha\rightarrow\beta)\in B$
+
+פעולות (כללי היסק): יהיו $\alpha,\beta,\gamma\in X_{B,F}$. אזי:
+
+$MP(\alpha,\alpha\rightarrow\beta)=\beta$
+
+אם $\gamma\neq\alpha\rightarrow\beta$ אזי $MP(\alpha,\gamma)=\alpha$
+
+סימון היסק: $MP:\dfrac{\alpha,\;\alpha\rightarrow\beta}{\beta}$
+
+קבוצה זו נקראת קבוצת הפסוקים היכיחים. כאשר לכל $\alpha\in X_{B,F}$ נסמן $\vdash\alpha$.
+
+\subsubsection*{הוכחה מתוך הנחות}
+
+בהנתן קבוצת פסוקים $\Sigma$, הקבוצה $X_{B,F}$ תכלול גם את כל הפסוקים שב-$\Sigma$ בבסיס שלה.
+
+סימון $Ded(X):=X_{B,F}$.
+
+\textbf{תכונות של הוכחה מתוך הנחות:}
+
+\begin{enumerate}
+  \item אם $\alpha\in X$ אז $X\vdash\alpha$
+  \item אם $X\subseteq Y$ וגם $X\vdash\alpha$ אז $Y\vdash\alpha$ (מונוטוניות)
+  \item אם לכל $\beta\in X$ מתקיים $Y\vdash\beta$ אזי לכל $X\vdash\alpha$ מתקיים $Y\vdash\alpha$.
+\end{enumerate}
+
+\underline{הוכחה ל-3:}
+
+נבנה סדרת יצירה ל-$\alpha$ מתוך $Y$.
+
+יהי $X\vdash\alpha$. אזי קיימת סדרת הוכחה ל
+
+\noindent 1.
+
+\noindent 2.
+
+$\vdots$
+
+\noindent $k$.
+
+משפט הדדוקציה:
+
+לכל $\alpha,\beta\in WFF_{\{\lnot,\rightarrow\}}$ ולכל $X\subseteq WFF_{\{\lnot,\rightarrow\}}$ מתקיים:
+
+$X\vdash\alpha\rightarrow\beta$ אמ''מ $X\cup\{\alpha\}\vdash\beta$.
+
+אינטואיציה: לפעמים יותר נוח לצרף את $\alpha$ לקבוצת ההנחות שלנו על מנת להוכיח משהו.
+
+\textbf{איך מוכיחים שפסוק יכיח מתוך קבוצה?}
+
+לפי משפט הדדוקציה ואז תכונות, או על פי יצירת סדרת הוכחה.
+
+\subsubsection*{משפט הנאותות:}
+
+לכל פסוק $\alpha$ ולכל קבוצת פסוקים $X$ מתקיים:
+
+$X\vDash\alpha\Leftarrow X\vdash\alpha$.
+
+\textbf{הוכחה: אינדוקציית מבנה}
+
+\subsubsection*{קבוצת פסוקים עקבית}
+
+יש שתי הגדרות שקולות:
+
+\begin{enumerate}
+  \item קבוצת פסוקים $X$ נקראת עקבית אם קיים פסוק $\alpha$ כך ש-$X\nvdash\alpha$.
+  \item קבוצת פסוקים $X$ נקראת עקבית אם לכל פסוק $\alpha$ מתקיים $X\vdash\alpha$ או $X\nvdash\lnot\alpha$.
+\end{enumerate}
+
+\textcolor{red}{להסתכל על ההוכחה!}
+
+\textbf{משפט}: אם $X$ ספיקה אז היא עקבית.
+
+הערות:
+
+\begin{itemize}
+  \item \textcolor{blue}{כדאי לחשוב האם כללי ההיסק השונים מקיימים את משפט הנאותות $(Ded(X)\subseteq Con(X))$. למשל: $\dfrac{\alpha\wedge\beta}{\alpha,\beta},\ \dfrac{\alpha}{\lnot\lnot\alpha},\ \dfrac{\alpha\rightarrow\beta,\lnot\beta}{\lnot\alpha},\ \dfrac{\lnot(\alpha\land\beta)}{\lnot\alpha,\lnot\beta}$.}
+\end{itemize}
+
+\subsubsection*{תכונות מערכת ההוכחה (תרגול):}
+
+\begin{itemize}
+  \item הנחת המבוקש: $\Sigma\vdash\alpha\Leftarrow\alpha\in\Sigma$
+  \item סופיות ההוכחה: $\exists\Sigma:|\Sigma|<\infty\wedge\Sigma\subseteq\Gamma,\ \Sigma\vdash\alpha\Leftarrow\Gamma\vdash\alpha$
+  \item מונוטוניות (ראינו)
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section*{הרצאה 6:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``It works! Finally, it works! I don't know why, but it does. And that's all that matters''}
+\end{quote}
+
+\textbf{משפט:}
+
+תהי $X$ קבוצת פסוקים ויהי $\alpha$ פסוק.
+
+אם $X\cup\{\lnot\alpha\}$ לא עקבית אז $X\vdash\alpha$.
+
+\textcolor{red}{להסתכל על ההוכחה של זה!}
+
+\textbf{משפט:}
+
+תהי $X$ קבוצת פסוקים. אם $X$ עקבית אז $X$ ספיקה.
+
+\textbf{משפט השלמות:}
+
+תהי $X$ קבוצת פסוקים ויהי $\alpha$ פסוק. $X\vdash\alpha\Leftarrow X\vDash\alpha$.
+
+\subsubsection*{עקביות מקסימלית}
+
+קבוצת פסוקים $Y$ נקראת עקבית מקסימלית אם היא עקבית וגם לכל פסוק $\alpha$ מתקיים $X\vdash\alpha$ או $X\vdash\lnot\alpha$.
+
+משפטים:
+
+\begin{itemize}
+  \item אם $X$ עקבית אז קיימת $Y$ עקבית מקסימלית כך ש-$X\subseteq Y$: \textcolor{red}{הוכחה חשובה}
+  \item $X$ עקבית מקסימלית אמ''מ $|M(X)|=1$
+\end{itemize}
+
+\subsubsection*{משפט הקומפקטיות}
+
+$Y$ עקבית מקסימלית אמ''מ כל תת-קבוצה \textbf{סופית} שלה היא עקבית.
+
+\subsubsection*{טיפים להוכחות מהצורה $Ded_{N}(\emptyset)\subseteq Con(\emptyset)$:}
+
+\begin{itemize}
+  \item וודא/י שמתקיים עבור כל כללי ההיסק שהפלט הוא אכן טאוטולוגיה בהינתן שהקלט טאוטולוגיה, וגם עבור האקסיומות שהן אכן טאוטולוגיות.
+  \begin{itemize}
+    \item אם זהו אכן המצב, תמשיך/י להוכחה באינדוקציית מבנה ``רגילה'' וסיימת/ה.
+  \end{itemize}
+  \item אחרת, וודא/י שכללי ההיסק שלא מקיימים את זאת אכן ניתנים לשימוש, על ידי למשל בדיקת האם ניתן בכלל להגיע לביטוי מהצורה של הארגומנטים (קשר מרכזי וכו').
+  \begin{itemize}
+    \item אם זהו אכן המצב, הגדר/י תכונה $T$ מתאימה המקיימת $T\subseteq Con(\emptyset)$ והראה/י שמתקיים $Ded_{N}(\emptyset)\subseteq T$.
+  \end{itemize}
+  \item אחרת, כנראה יש להפריך\ldots\ ואז בהצלחה לכולנו :(
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section*{הרצאה 7:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``If I lead you through the fury, will you call to me?''}
+\end{quote}
+
+\subsection*{גדירות}
+
+נאמר שקבוצת ההשמות $K\subseteq Ass$ היא גדירה אם קיימת קבוצת פסוקים $\Sigma$ שמגדירה אותה. כלומר קיימת $\Sigma$ כך ש-$M(\Sigma)=K$.
+
+\subsection*{גדירות באופן סופי}
+
+נאמר שקבוצת ההשמות $K$ היא גדירה באופן סופי אם קיימת $\Sigma$ סופית שמגדירה אותה.
+
+\subsubsection*{משפט: התנאים הבאים שקולים}
+
+\begin{itemize}
+  \item $K$ גדירה באופן סופי
+  \item $K$ גדירה על ידי פסוק יחיד
+  \item $K,\ Ass\setminus K$ גדירות
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section*{הרצאה 8:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``Jesse, I don't know what I have done''}
+\end{quote}
+
+\subsection*{תחשיב היחסים}
+
+א''ב של השפה:
+
+סימנים שאינם תלויים במילון:
+
+\begin{itemize}
+  \item $Symb$
+  \item כמתים
+  \item סימן יחס שוויון $\thickapprox$
+  \item $Var$
+\end{itemize}
+
+סימנים שכן תלויים במילון:
+
+\begin{itemize}
+  \item סימני קבוע: $c_{i}$ עבור $i\in\mathbb{N}$
+  \item סימני פונקציה: $F_{i,k}$ עבור $i\in\mathbb{N}$, $k\geq1$ סימן פונקציה $k$-מקומית
+  \item סימני יחסים: $R_{i,k}$ עבור $i\in\mathbb{N}$, $k\geq1$ סימן יחס $k$-מקומי
+\end{itemize}
+
+\underline{שורה תחתונה:} על מנת להגדיר מילון מספיק לציין סימני קבועים, פונקציות ויחסים.
+
+\subsection*{שמות עצם:}
+
+קבוצה אינדוקטיבית המוגדרת מעל קבוצת המחרוזות הסופיות מעל הא''ב מעל $\tau$.
+
+\textbf{בסיס:}
+
+משתנים $Var$ וסימני קבוע שמופיעים ב-$\tau$.
+
+\textbf{פעולות:}
+
+לכל סימן פונקציה $k$-מקומית $F$ שמופיע במילון מוגדרת פעולה $W^{k}\rightarrow W$ שבהנתן $t_{1},t_{2},\ldots,t_{k}\in W$ מחזירה את $F(t_{1},t_{2},\ldots,t_{k})$.
+
+\subsubsection*{משפט הקריאה היחידה לשמות עצם}
+
+לכל שם עצם ``יש פירוק יחיד''.
+
+\underline{הערה מהמחברת 1}: בהרצאה הרלוונטית לא הוצג בצורה פורמלית\ldots\ \textenglish{so don't come for me}
+
+\underline{הערה מהמחברת 2}: זה יהיה המצב גם בהמשך כשאציג אותו עבור קבוצת הנוסחאות :>
+
+\subsection*{נוסחאות:}
+
+קבוצה אינדוקטיבית המוגדרת מעל קבוצת המחרוזות הסופיות מעל הא''ב מעל $\tau$.
+
+\textbf{בסיס:}
+
+לכל שני שמות עצם מעל $\tau$ שנסמן אותם על ידי $t_{1},t_{2}$ מתקיים ש-$t_{1}\approx t_{2}$ היא נוסחה.
+
+לכל סימן יחס $k$-מקומי $R$ ב-$\tau$ ולכל $t_{1},t_{2},\ldots,t_{k}$ שמות עצם מעל $\tau$:
+$R(t_{1},t_{2},\ldots,t_{k})$ היא נוסחה.
+
+\underline{אלו ייקראו נוסחאות אטומיות.}
+
+\textbf{פעולות:}
+
+\begin{itemize}
+  \item הפעלת קשרים
+  \item הפעלת כמתים
+  \begin{itemize}
+    \item \underline{הערה}: הקפידו על סוגריים!
+  \end{itemize}
+\end{itemize}
+
+\subsubsection*{משפט הקריאה היחידה לנוסחאות:}
+
+לכל נוסחה ``יש פירוק יחיד''.
+
+\subsection*{סמנטיקה לתחשיב היחסים}
+
+בהינתן מילון $\tau=\langle c_{0},c_{1},\ldots,F_{0},F_{1},\ldots,R_{0},R_{1}\rangle$, מבנה עבור המילון ייראה כך:
+$M=\langle D^{M},c_{0}^{M},c_{1}^{M},\ldots,F_{0}^{M},F_{1}^{M},\ldots,R_{0}^{M},R_{1}^{M}\rangle$.
+
+כאשר:
+
+\begin{itemize}
+  \item $D^{M}\neq\emptyset$
+  \item לכל סימן קבוע $c_{i}$ ב-$\tau$, $c_{i}^{M}\in D^{M}$
+  \item לכל פונקציה \ldots
+\end{itemize}
+
+\subsection*{הרצאה 9:}
+
+\begin{quote}
+\textenglish{``when I ask a good question, people assume I'm a guy. When I ask a stupid question, people assume I'm a girl.''}
+\end{quote}
+
+\subsection*{השמות}
+
+בהינתן מילון $\tau$ ומבנה $M$ מעל המילון, השמה היא פונקציה $z:\{v_{i} \mid i\in\mathbb{N}\}\rightarrow D^{M}$.
+
+\textbf{השמה מורחבת:} $\overline{z}:term(\tau)\rightarrow D^{M}$. מוגדרת בצורה הבאה:
+
+בסיס: $\overline{z}(t)=z(t)=z(v_{i})$, עבור קבועים פשוט נותנת להם את הקבוע.
+
+צעד אינדוקציה: $t=F(t_{1},\ldots,t_{k})$, $\overline{z}(t)=F^{M}(\overline{z}(t_{1}),\ldots,\overline{z}(t_{k}))$
+
+\subsection*{ספיקות}
+
+``מתי מבנה $M$ מעל מילון $\tau$ והשמה $z$ מספקים נוסחא?''
+
+\subsection*{משתנים קשורים וחופשיים}
+
+משתנה ייקרא משתנה חופשי אם קיים מופע חופשי שלו.
+
+\subsection*{משפט אנאלוגי למשפט התלות הסופית}
+
+יהי $\tau$ מילון ותהי נוסחה $\alpha$ מעל $\tau$.
+
+יהי $M$ מבנה עבור $\tau$ ותהיינה $z_{1},z_{2}$ השמות עבור $M$.
+
+אם מתקיים $z_{1}(v_{i})=z_{2}(v_{i})$ לכל משתנה $v_{i}$ חופשי ב-$\alpha$, אז $z_{2}$ מספקת את $\alpha$ אמ''מ $z_{1}$ מספקת אותה.
+
+נוסחה ללא משתנים חופשיים נקראת פסוק.
+
+פסוק לא תלוי בערך ש-$z$ נותנת למשתנים.
+
+%---------------------------------------------------------------------
+\part*{הרצאה 10:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``We haven't had our pizza party yet :(''}
+\end{quote}
+
+\subsection*{ספיקות של נוסחה}
+
+בהינתן מילון $\tau$.
+
+נוסחה $\alpha$ תיקרא ספיקה אם קיים מבנה $M$ והשמה $z$ כך ש-$M\vDash_{z}\alpha$.
+
+אם קיים מבנה $M$ המקיים שלכל $z$, $M\vDash_{z}\alpha$, נסמן $M\vDash\alpha$.
+
+אם לכל מבנה $M$ מתקיים שלכל $z$, $M\vDash\alpha$, נסמן $\vDash\alpha$.
+
+נוסחה $\alpha$ נקראת סתירה אם לכל מבנה $M$ ולכל $z$\ldots
+
+\subsection*{גרירה לוגית}
+
+בהינתן מילון $\tau$, נאמר שקבוצת נוסחאות $\Sigma$ גוררת לוגית $\alpha$ אם לכל מבנה $M$ והשמה $z$ מתקיים שאם $M\vDash_{z}\Sigma$ אז $M\vDash_{z}\alpha$.
+
+במקרה זה נסמן $\Sigma\vDash\alpha$.
+
+אם $\Sigma=\{\beta\}$ ומתקיים $\Sigma\vDash\alpha$ אז נסמן $\beta\vDash\alpha$.
+
+אם $\alpha\vDash\beta$ וגם $\beta\vDash\alpha$ אז נאמר שהם שקולים לוגית ונסמן $\alpha\equiv\beta$.
+
+\textcolor{red}{לעשות דוגמה אחת מכל סוג.}
+
+\subsection*{גדירות}
+
+בהינתן $\tau$ עבור קבוצת פסוקים $\Sigma$ נגדיר $M(\Sigma)=\{M \mid M\vDash\Sigma\}$.
+
+נאמר שקבוצת מבנים $K$ היא גדירה אם קיימת קבוצת נוסחאות $\Sigma$ כך ש-$M(\Sigma)=K$.
+
+\subsection*{משפט הקומפקטיות}
+
+קבוצת נוסחאות סגורות נקראת ספיקה אמ''מ לכל תת-קבוצה סופית מתקיים שהיא ספיקה.
+
+על מנת להפריך גדירות נשתמש במשפט הזה.
+
+%---------------------------------------------------------------------
+\part*{הרצאה 11:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``Darker than your brown?''}
+\end{quote}
+
+%---------------------------------------------------------------------
+\part*{הרצאה 12:}
+%---------------------------------------------------------------------
+
+\begin{quote}
+\textenglish{``Are alpha women a thing?''}
+\end{quote}
+
+\end{document}
