@@ -15,6 +15,13 @@
 
 \setlist[enumerate,1]{leftmargin=*, label=\arabic*.}
 \setlist[itemize,1]{leftmargin=*}
+\setcounter{tocdepth}{2}
+
+\newcommand{\tocsubsection}[1]{%
+  \subsection*{#1}%
+  \phantomsection
+  \addcontentsline{toc}{subsection}{#1}%
+}
 
 \title{\textbf{Operating Systems -- Lecture \& Tutorial Notes}}
 \author{}
@@ -30,7 +37,7 @@
 \section{Lecture 2}
 %---------------------------------------------------------------------
 
-\subsection*{Processes}
+\tocsubsection{Processes}
 
 \begin{enumerate}
   \item When a process is waiting, it is sleeping or ``blocked''.
@@ -44,7 +51,7 @@
   \item The init process (PID 1) acts like a parent for all the orphan processes.
 \end{enumerate}
 
-\subsection*{Signals}
+\tocsubsection{Signals}
 
 \begin{enumerate}
   \item When a signal is received, the process stops whatever it is doing and handles it. They cannot be ignored unless that is their handler.
@@ -66,7 +73,7 @@
   \item If a signal is fired when we are in kernel mode, the syscall fails and returns \texttt{EINTR} in \texttt{errno}.
 \end{enumerate}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item Do signals cause context switches? When do context switches occur?
@@ -88,7 +95,7 @@
   \item Can syscalls interrupt interrupts? No. Interrupts are handled in the kernel anyway and we would not need to use syscalls in the kernel code.
 \end{enumerate}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item Where is the exit value of a program returned? Does it contain any info relevant to its waiting parent?
@@ -128,7 +135,7 @@
 \section{Lecture 3}
 %---------------------------------------------------------------------
 
-\subsection*{Threads}
+\tocsubsection{Threads}
 
 \begin{enumerate}
   \item Multiprocessing is when we use multiple CPU cores to run a single process -- an example of this is web servers. This is done by forking and letting the child processes handle the actual requests (for now; actually uses threads for the most part). The parent process will only ever receive requests. It is often done using a bound number of pre-forked children because forking on the fly is ``expensive''.
@@ -149,7 +156,7 @@
   \item Threads can be implemented at user level.
 \end{enumerate}
 
-\subsection*{Context Switching Overhead}
+\tocsubsection{Context Switching Overhead}
 
 \begin{enumerate}
   \item If we assume that a context switch takes $c$ time and that a task takes $c \times k$ time, then the rate of cycles the context switch takes is $c / (c \times k + c) = 1/(1+k)$. The bigger $k$ is, the smaller the rate.
@@ -162,13 +169,13 @@
   \item The indirect component of the context switch is two times greater than the direct component.
 \end{enumerate}
 
-\subsection*{Memory Sharing Between Processes}
+\tocsubsection{Memory Sharing Between Processes}
 
 \begin{enumerate}
   \item Processes can share memory via opening a shared memory object using \texttt{shm\_open}, \texttt{shmget}, \texttt{shm\_unlink}. \texttt{shmat} attaches the object to the address space of the process, etc.
 \end{enumerate}
 
-\subsection*{Terminology}
+\tocsubsection{Terminology}
 
 \begin{itemize}
   \item \textbf{Multiprocessing}: when we use multiple cores to run the same job.
@@ -176,7 +183,7 @@
   \item \textbf{Multitasking}: when we timeslice (same core).
 \end{itemize}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item What happens when I try to initialize a writer first when there are no readers? What does this even mean?
@@ -203,7 +210,7 @@
   \item How a process sends a signal to another process: it asks the OS to record a signal, and when the kernel returns to the other process the signal is handled.
 \end{enumerate}
 
-\subsection*{Process I/O}
+\tocsubsection{Process I/O}
 
 \begin{enumerate}
   \item \texttt{stdout} -- 1. \texttt{stdin} -- 0. \texttt{stderr} -- 2.
@@ -227,7 +234,7 @@
   \item FIFO is not automatically removed. We must remove it using \texttt{rm} or \texttt{unlink()}.
 \end{enumerate}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item If the process does not use any system calls, how will it get the signal? And why does the OS call the handler -- did we not say they are called by the process in user mode? \textit{Answer: it is executed in user mode.}
@@ -404,7 +411,7 @@
   \item C statements are oftentimes not atomic, so a context switch can happen in the middle of one.
 \end{enumerate}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item Why does \texttt{kill} impact everything? If the process receives a signal, who deals with it?
@@ -479,7 +486,7 @@
   \item NRU is like LRU but prefers keeping dirty pages. It adds another bit for whether the page is dirty.
 \end{enumerate}
 
-\subsection*{Questions}
+\tocsubsection{Questions}
 
 \begin{itemize}
   \item Do frames and pages need to have the same size?
@@ -526,7 +533,7 @@
   \item Syncing and invalidating TLBs -- OS. Populating TLBs -- hardware.
 \end{enumerate}
 
-\subsection*{Tutorial 11}
+\tocsubsection{Tutorial 11}
 
 (No notes.)
 
