@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.1)  22 APR 2026 15:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.1)  22 APR 2026 16:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**src/summary.tex
-(./src/summary.tex
+**src/economy_and_social_change.tex
+(./src/economy_and_social_change.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
 (/opt/texlive/texdir/texmf-dist/tex/latex/base/article.cls
@@ -182,8 +182,8 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 4.
 File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count295
 )
-(./summary.aux)
-\openout1 = `summary.aux'.
+(./economy_and_social_change.aux)
+\openout1 = `economy_and_social_change.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
 LaTeX Font Info:    ... okay on input line 9.
@@ -237,9 +237,9 @@ Package color Info: Driver file: pdftex.def on input line 149.
 (/opt/texlive/texdir/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 Package hyperref Info: Link coloring ON on input line 9.
 
-(./summary.out) (./summary.out)
+(./economy_and_social_change.out) (./economy_and_social_change.out)
 \@outlinefile=\write3
-\openout3 = `summary.out'.
+\openout3 = `economy_and_social_change.out'.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 13.
@@ -249,33 +249,34 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 13.
  [1
 
-{/opt/texlive/texdir/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./summary.
-toc
+{/opt/texlive/texdir/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(./economy_and_social_change.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 2.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 2.
 )
 \tf@toc=\write4
-\openout4 = `summary.toc'.
+\openout4 = `economy_and_social_change.toc'.
 
  [2] [3{/opt/texlive/texdir/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.en
-c}] [4] (./summary.aux)
+c}] [4] (./economy_and_social_change.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
  ***********
-Package rerunfilecheck Info: File `summary.out' has not changed.
+Package rerunfilecheck Info: File `economy_and_social_change.out' has not chang
+ed.
 (rerunfilecheck)             Checksum: 2DB919655F64E8AB37E9D85B70874FE6;2196.
  ) 
 Here is how much of TeX's memory you used:
  8506 strings out of 467349
- 131435 string characters out of 5417750
- 550144 words of memory out of 5000000
+ 131867 string characters out of 5417750
+ 550234 words of memory out of 5000000
  37497 multiletter control sequences out of 15000+600000
  632657 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,394b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,6n,79p,412b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/texlive/texdir/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></o
 pt/texlive/texdir/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/te
 xlive/texdir/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/texlive/
@@ -284,7 +285,7 @@ texdir/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/texlive/texdir
 -dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/texlive/texdir/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/texlive/texdir/texmf-dist/font
 s/type1/public/cm-super/sfrm1000.pfb>
-Output written on summary.pdf (4 pages, 117274 bytes).
+Output written on economy_and_social_change.pdf (4 pages, 117274 bytes).
 PDF statistics:
  128 PDF objects out of 1000 (max. 8388607)
  104 compressed objects within 2 object streams

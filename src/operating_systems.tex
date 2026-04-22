@@ -1,0 +1,556 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\itshape}{}{0em}{}
+
+\setlist[enumerate,1]{leftmargin=*, label=\arabic*.}
+\setlist[itemize,1]{leftmargin=*}
+
+\title{\textbf{Operating Systems -- Lecture \& Tutorial Notes}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+%---------------------------------------------------------------------
+\section{Lecture 2}
+%---------------------------------------------------------------------
+
+\subsection*{Processes}
+
+\begin{enumerate}
+  \item When a process is waiting, it is sleeping or ``blocked''.
+  \item When we context switch to another process we save the current PCB and load the next PCB.
+  \item \texttt{wait} will block unless \texttt{WNOHANG} is given as an option, otherwise it will run in parallel.
+  \item \texttt{fork} returns 0 if the current process is the child, otherwise it returns $>0$ (PPID).
+  \item Theoretically the printing order is not defined. But practically there are locks on printing and accessing the STD I/O.
+  \item \texttt{errno} is a global variable storing the error number of the last syscall. Before checking the error value of the last syscall, \texttt{errno} needs to be zeroed.
+  \item \texttt{exit} should not fail.
+  \item \texttt{execv} never returns unless it fails.
+  \item The init process (PID 1) acts like a parent for all the orphan processes.
+\end{enumerate}
+
+\subsection*{Signals}
+
+\begin{enumerate}
+  \item When a signal is received, the process stops whatever it is doing and handles it. They cannot be ignored unless that is their handler.
+  \item The default handler is ignore or die.
+  \item You cannot ignore the behavior of certain signals: \texttt{Ctrl-Z} (stop), \texttt{SIGSTOP} (makes the process sleep), \texttt{SIGKILL}, \texttt{SIGCONT}.
+  \item You cannot change the behavior of certain signals: \texttt{SIGSTOP}, \texttt{SIGKILL}. You can change the handler of \texttt{SIGCONT}.
+  \item When the signal handler does not exit, the process resumes where it last was.
+  \item Ignoring a signal is done using \texttt{SIG\_IGN}. \texttt{SIG\_DFL} is the default behavior.
+  \item \texttt{SIGBUS} -- invalid dereference. \texttt{SIGILL} -- illegal instruction. \texttt{SIGSEGV} -- segmentation fault. \texttt{SIGFPE} -- arithmetic errors. All of these are HW interrupts. The hardware sends an interrupt, the OS handles it and as part of the handling process it sends a signal to the process in question.
+  \item Every CPU has a soft limit and a hard limit. \texttt{SIGXCPU} is sent to a process if it passes the soft limit.
+  \item When a process exceeds a hard limit, a \texttt{SIGKILL} is sent.
+  \item \texttt{SIGPIPE} -- write to pipe with no readers.
+  \item Processes can fire signals using the system call \texttt{kill(pid, sig)}.
+  \item Signals are invoked when returning from kernel to user mode.
+  \item Signals being asynchronous may lead to race conditions. That is why they are allowed to be blocked.
+  \item The PCB keeps a list of all the process signals that have been blocked.
+  \item \texttt{SIGIO} is to be fired whenever some I/O is ready. This only makes sense when we are talking about a non-blocking file descriptor.
+  \item Signal mask (\texttt{sigmask}): the current signals being blocked by the process. When using \texttt{sigblock} the set is the union of the old mask and the new mask. When using \texttt{sigunblock} it is the set difference of the old mask and the new mask. When using \texttt{setmask} it sets the old to the new.
+  \item If a signal is fired when we are in kernel mode, the syscall fails and returns \texttt{EINTR} in \texttt{errno}.
+\end{enumerate}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item Do signals cause context switches? When do context switches occur?
+  \item What does a child process not inherit?
+  \item Difference between all the different \texttt{wait} functions?
+  \item When does a \texttt{wait} block?
+  \item Syscalls that should not fail? \texttt{exit}. What else?
+  \item \texttt{SIGIO}?
+  \item What does point 12 mean?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Tutorial 1}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Interrupts are handled in between instructions, such that the execution of an instruction is not interrupted.
+  \item Interrupts can occur when we are in the kernel too; in other words, interrupts can interrupt syscalls.
+  \item Can syscalls interrupt interrupts? No. Interrupts are handled in the kernel anyway and we would not need to use syscalls in the kernel code.
+\end{enumerate}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item Where is the exit value of a program returned? Does it contain any info relevant to its waiting parent?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Tutorial 2}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item PID is a 32-bit number. Most OSes use the 15 least significant bits, so about 32k processes. The admin can configure a higher number.
+  \item Idle has PID 0.
+  \item Idle creates init, which has PID 1. Init creates the rest of the processes.
+  \item \texttt{printf} is thread safe.
+  \item \texttt{wait(int* wstatus)} -- status has info about the status of the terminating child process, i.e.\ the exit value; it is in the second byte of the 4 bytes. That same value is saved in \texttt{WEXITSTATUS}.
+  \item When using \texttt{wait} -- if there are no child processes or if they have all finished running, it returns $-1$.
+  \item \texttt{wait} and \texttt{waitpid} are blocking syscalls. To avoid this, we can use the flag \texttt{WNOHANG} as an argument for \texttt{waitpid}; that way, if the child process has not finished running, it will return 0 immediately.
+  \item \texttt{exit} does not return. \texttt{exit} is used as a standard part of the termination of a process. \texttt{main} is called by the libc function \texttt{\_\_\_lib\_start\_main()}.
+  \item The struct of a child process is only really deleted once the parent collects the termination status.
+  \item In \texttt{argv}, \texttt{argv[0]} is the name of the executable program and \texttt{argv[n-1] = NULL}.
+  \item If \texttt{execv} fails it returns $-1$, otherwise it does not return at all.
+  \item Non-blocking syscalls: \texttt{getpid}, \texttt{getppid} -- this is very important as it helps us understand that the OS will not put the process to sleep and schedule another one inherently.
+  \item Parent vs real parent: parent is the current parent, whereas the real parent is the parent that created the process. When talking about the Linux fields, if the real parent no longer exists, the field will point to the PCB of init. Real parent and parent may differ sometimes, such as when another process is monitoring the process using the system call \texttt{ptrace} (for debugging purposes). The parent is always signaled when a child process terminates (\texttt{SIGCHLD}), and the default response is to ignore it.
+  \item The OS keeps a list of the current processes. The head process is idle.
+  \item The OS keeps a hash table for all the processes.
+  \item The state of the program is saved in a 32-bit variable that acts as an array. One bit is on at a time. When a process is in \texttt{TASK\_INTERRUPTIBLE} state, it can be interrupted via a signal (when it is waiting for a child, for example). When a task is stopped, it has been stopped by another process (tracer or debugger).
+  \item Difference between runqueue and process list: the runqueue only has the processes that are ready to run (\texttt{TASK\_RUNNING}).
+  \item Tasks are added to the runqueue using \texttt{activate\_task}.
+  \item In Linux there are waiting queues for all the tasks in the states \texttt{TASK\_INTERRUPTIBLE} and \texttt{TASK\_UNINTERRUPTIBLE}. The only way a process is moved there is if it uses a blocking syscall, like \texttt{wait}, \texttt{read}, \texttt{write}, etc.
+\end{enumerate}
+
+\begin{quote}
+\textit{``And I, give all moments for the sky, and time, it wasn't yours it wasn't mine. And I wasn't taken from for nothing. It was always for the sky.''}
+\end{quote}
+
+%---------------------------------------------------------------------
+\section{Lecture 3}
+%---------------------------------------------------------------------
+
+\subsection*{Threads}
+
+\begin{enumerate}
+  \item Multiprocessing is when we use multiple CPU cores to run a single process -- an example of this is web servers. This is done by forking and letting the child processes handle the actual requests (for now; actually uses threads for the most part). The parent process will only ever receive requests. It is often done using a bound number of pre-forked children because forking on the fly is ``expensive''.
+  \item Forking is a spectrum: on one end exists a forked process and on the other exists a thread.
+  \item Threads share everything except for the stack and the registers.
+  \item OpenMP -- the code looks like it is linear but when compiled the compiler adds multithreading directives, making the process multithreaded.
+  \item There is also the \texttt{<thread>} library, which is a C++ library.
+  \item Pthreads is the library most often used.
+  \item Windows and Solaris implement threads and processes differently, whereas Linux does not.
+  \item In Linux, \texttt{pthread\_create} and \texttt{fork} are just wrapper functions of \texttt{clone}. \texttt{clone} is the actual syscall that does the process duplication/cloning. In other words, both \texttt{pthread\_create} and \texttt{fork} use \texttt{clone} in their implementation in Linux.
+  \item In Linux, everything is a file. One way to obtain a file descriptor is by opening it.
+  \item Pipes allow for sending messages between a child and its parent. A pipe is just a pair of file descriptors. \texttt{pipe[0]} is for reading and \texttt{pipe[1]} is for writing.
+  \item Reminder: \texttt{read} is a blocking syscall. Therefore when a process tries to read from a pipe that has not been written to yet, it will keep waiting until something finally gets written.
+  \item Reminder: writing to a pipe with a closed reading end will fire \texttt{SIGPIPE} (writing to a pipe with no readers as well).
+  \item We create pipes using the syscall \texttt{pipe}, which takes an array of two \texttt{int}s as an argument.
+  \item When creating a thread we can give the function we would like it to run as an argument. In addition, we can wait for the threads to finish.
+  \item A parent and its forked child will not share an array, but a parent's threads will.
+  \item Threads can be implemented at user level.
+\end{enumerate}
+
+\subsection*{Context Switching Overhead}
+
+\begin{enumerate}
+  \item If we assume that a context switch takes $c$ time and that a task takes $c \times k$ time, then the rate of cycles the context switch takes is $c / (c \times k + c) = 1/(1+k)$. The bigger $k$ is, the smaller the rate.
+  \item Context switch cost is composed of two main costs: direct and indirect overhead. Direct overhead can be measured by getting the cycle count before, then context switching, and then getting the cycle count after: after $-$ before $=$ direct overhead. Indirect overhead refers to the time it takes for the hardware to restore/create its optimal state curated for the process we are switching to (e.g.\ caching).
+  \item Time per instruction $=$ cycle of the CPU.
+  \item DRAM is more than 100$\times$ slower than a CPU.
+  \item Temporal locality: if a location in memory has been accessed before it is likely to be accessed again. Spatial locality: if a location in memory has been accessed before, it is likely that nearby locations will also be accessed. That is what caching is for.
+  \item L1 cache: 4--5 CPU cycles. L2 cache: 12 cycles. L3: 36 cycles. DRAM: 230 cycles.
+  \item Switching between threads could be cheaper if they are working on the same instructions.
+  \item The indirect component of the context switch is two times greater than the direct component.
+\end{enumerate}
+
+\subsection*{Memory Sharing Between Processes}
+
+\begin{enumerate}
+  \item Processes can share memory via opening a shared memory object using \texttt{shm\_open}, \texttt{shmget}, \texttt{shm\_unlink}. \texttt{shmat} attaches the object to the address space of the process, etc.
+\end{enumerate}
+
+\subsection*{Terminology}
+
+\begin{itemize}
+  \item \textbf{Multiprocessing}: when we use multiple cores to run the same job.
+  \item \textbf{Multiprogramming}: when we run multiple jobs together (both in the case of a single core and multiple cores).
+  \item \textbf{Multitasking}: when we timeslice (same core).
+\end{itemize}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item What happens when I try to initialize a writer first when there are no readers? What does this even mean?
+  \item Parents do not share the FDT, but if a parent creates a pipe and then forks, the child will have a copy of the FDT with all the open files including the pipe. Makes sense. And when there are multiple threads they just share the FDT with no cloning.
+  \item In the example given in slide 22 of Lecture 3, will the parent get stuck until the child reads? Will a \texttt{SIGPIPE} be fired? A \texttt{SIGPIPE} will NOT be fired, because there are readers (the child still has not closed the reading end). The parent will NOT get stuck. If, however, the parent tries to write when it also still has the reading end, it WILL get stuck because it is trying to write and will wait for the reading processes to finish before writing. Conversely, if the pipe is for threads then there is no need to close anything.
+  \item Can a previously reading child send a message to its parent?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Tutorial 3}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item In Linux, processes communicate using different means, such as pipes, the filesystem (I/O), sockets, and signals.
+  \item Signals are numbered from 1 to 31.
+  \item Signals are implemented using software only.
+  \item When using \texttt{kill()} with \texttt{sig=0}, all that does is check if the process with the specified PID actually exists.
+  \item How does the process know it has a signal? The OS updates the relevant bit in the PCB to signal that a signal of that type needs to be dealt with. Every time the kernel returns from kernel mode to user mode, the OS checks if there are any pending signals, then calls the handler and zeroes the relevant bit. In the case of multiple signals: handled from start to finish.
+  \item In the PCB we also save the signal actions in a structure that has 31 slots.
+  \item The handler does not need a context switch but the state of the process is saved before handling the signal nonetheless.
+  \item When a signal is being handled, all signals of the same type are masked temporarily to avoid reentrancy.
+  \item In the case of a shell and commands, the process that sends the signals is the shell.
+  \item How the OS sends signals to processes: the process does something illegal, the CPU or relevant hardware sends an interrupt, the OS handles it and records a signal for the process. Upon returning from kernel mode the handler for the signal is called in user mode.
+  \item How a process sends a signal to another process: it asks the OS to record a signal, and when the kernel returns to the other process the signal is handled.
+\end{enumerate}
+
+\subsection*{Process I/O}
+
+\begin{enumerate}
+  \item \texttt{stdout} -- 1. \texttt{stdin} -- 0. \texttt{stderr} -- 2.
+  \item ``Regular'' files are on the disk whereas hardware or pipes are in DRAM.
+  \item Processes have FDTs. FDTs are pointed to by \texttt{files.fd} in the PCB. Every object in the FDT is a file object that has fields like seek pointers, etc. All open files are also stored in the global FDT.
+  \item \texttt{open} is a variadic function. It can receive flags and modes. Returns the new fd upon success and $-1$ upon failure. The fd is the lowest fd found viable in the FDT. If we want to create a new file we must pass the \texttt{mode} argument.
+  \item \texttt{close} returns 0 upon success and $-1$ upon failure.
+  \item \texttt{read} and \texttt{write} perform their actions starting from the seek pointer.
+  \item Upon success, \texttt{read} and \texttt{write} return the number of bytes. If \texttt{count = 0}, \texttt{read}/\texttt{write} will do nothing and return 0 immediately.
+  \item The file object struct contains the following fields: \texttt{f\_count} (number of pointers to the object -- useful for pipes and virtual memory), \texttt{f\_pos} (the seek pointer), \texttt{f\_mode} (the file modes), \texttt{file\_ops} (pointers to the implementation of \texttt{read}, \texttt{write}, etc.).
+  \item \texttt{execv} does not close any previously opened files and does not mess with the FDT.
+  \item What is written to a pipe is written to the OS's buffers.
+  \item \texttt{pipe} returns 0 upon success and $-1$ upon failure.
+  \item With pipes there is a reading seek pointer and a writing seek pointer.
+  \item When attempting to read from an empty pipe and no one is trying to write to it, \texttt{read} will return 0. Otherwise, if someone is trying to write, \texttt{read} will block.
+  \item If there is not enough memory to write, the writers will be blocked until the readers read.
+  \item FIFO is a public file stored in DRAM. It is a file even though it is not on the disk.
+  \item \texttt{mkfifo()}
+  \item FIFO is a two-sided communication pipe. Has a single fd. Anyone can write or read but must open it first.
+  \item If a process opens a FIFO for reading it will be blocked until a process tries to write to it.
+  \item FIFO is not automatically removed. We must remove it using \texttt{rm} or \texttt{unlink()}.
+\end{enumerate}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item If the process does not use any system calls, how will it get the signal? And why does the OS call the handler -- did we not say they are called by the process in user mode? \textit{Answer: it is executed in user mode.}
+  \item What happens when a context switch occurs while dealing with an interrupt?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Tutorial 4}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Modules are added kernel code that we can load at runtime (no need to recompile or reboot the computer). They are used to add new functionality to a program. Character devices and block devices.
+  \item How a computer is booted: when a PC is turned on, the OS is yet to be in DRAM and needs to be loaded from the disk.
+  \item How the OS is booted: BIOS is first loaded to memory. It loads the first sector of the MBR. MBR loads the boot loader and the boot loader loads the kernel. The kernel loads init and runs it.
+  \item BIOS identifies hardware devices, checks if the standard I/O works fine, and checks for any bootable devices. If there are none it prints an error; otherwise it loads the first sector.
+  \item The boot loader allows us to choose which kernel to load. It also loads the initial filesystem \texttt{initramfs}/\texttt{initrd}, and the kernel uses the initial filesystem to find init and run it.
+  \item Once init is running it uses the info in the initial filesystem to load the actual filesystem and the necessary drivers. From there it is able to load all of the modules and drivers, and it mounts and discards the initial filesystem.
+  \item Once the actual filesystem is there, the kernel runs \texttt{/sbin/init}.
+  \item Modules are libraries that work in kernel mode.
+  \item Advantages of using modules: no need for recompilation, no need to reboot, can support newer hardware in the future, kernel code takes up space, and kernel compilation time is lowered.
+  \item Only root users can load modules.
+  \item Devices are represented under \texttt{/dev/} and are in the filesystem.
+  \item Drivers work in CPL 0. They map syscalls to specific implementations.
+  \item Block devices allow for random access and are accessed in units of blocks. Character devices are accessed serially. Linux has a page cache layer that allows for accessing block devices in bytes.
+  \item \texttt{mknod} requires root.
+  \item \texttt{f\_ops} in the file object is the driver. Drivers can store data in \texttt{private\_data}.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 4}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Jobs are rectangles in core $\times$ time (core on the $y$-axis, time on the $x$-axis). When a process needs multiple cores, it is said to be wide. If it takes a lot of time, it is said to be long.
+  \item One of the scheduling algorithms is FCFS.
+  \item Jobs are sometimes tailored to use most of the physical memory of the CPU cores so multiprogramming is not possible. We therefore need to use batch scheduling where cores are dedicated and not shared, and jobs run to completion (non-preemptive).
+  \item The slowdown factor of a job is the ratio between its response time and its runtime: $1 + w/r$.
+  \item Utilization: the percentage of time the CPU was utilized.
+  \item Average wait time is dominated by long jobs, and average slowdown is also dominated by long jobs.
+  \item Pros of FCFS: fair, easy to implement. Cons: short jobs have to wait a long time, creates fragmentation. Backfilling + FCFS (EASY) is supposed to help prevent a lot of the fragmentation.
+  \item Pros of backfilling: narrow or short jobs are able to run faster potentially, less fragmentation. Cons: needing to know the runtime in advance and keeping track of all the fragmentation to be able to patch it. Therefore when users submit jobs they need to have a good estimate of the runtime.
+  \item SJF -- jobs are ordered by their runtime. Optimal for performance reasons. May cause starvation.
+  \item Convoy effect: when jobs are slowed because a long job is running.
+  \item Both EASY and SJF suffer from the convoy effect.
+  \item Given any scheduler $S$, given that there is one CPU core, that the runtimes of the jobs are known, and that they all arrive simultaneously, then SJF performs better than $S$ in terms of average wait time or just as well.
+  \item SJBF (Shortest Job Backfilling): like EASY when it comes to scheduling but the backfilling is done in order of shortest to longest wait time.
+  \item LXF: the wait queue is ordered in terms of largest to smallest slowdown and the backfilling is done in terms of largest slowdown factor too (head of the wait queue). We have to recompute all the values when we finish running and when new jobs arrive since wait time changes.
+  \item When talking about preemptive schedulers we will ignore I/O or the state ``waiting''.
+  \item We want a scheduler to be preemptive when responsiveness matters to users (e.g.\ PowerPoint, Word) and when runtimes vary.
+  \item Quantum: the max amount of time a process is allowed to run before it is preempted. Quanta are more often than not assigned per process, depending on behavior in Solaris and on \texttt{nice} in Linux.
+  \item In preemptive schedulers, response time $\geq$ wait time $+$ runtime (because we need to include context switching and all the quanta cycles). Wait time is the same. Utilization and throughput may take into account context switches.
+  \item Round robin scheduling -- when we have cycled through all the processes in the list, it is called an ``epoch''.
+  \item How does the OS know it is time to preempt? There is an alarm interrupt. It fires every few milliseconds (a constant number). The OS checks if it is time to preempt upon receiving said interrupt.
+  \item With a huge quantum, RR simulates FCFS.
+  \item Gang scheduling: RR on multiple cores. Sometimes we want to run jobs that run on several cores, and sometimes we want to run processes together. When we assign a core a process, that process will not run on a different core. When processes terminate, sometimes we can merge time slots and end up with a greater quanta as a result.
+  \item The price of preemption is very high but will result in better wait and response times.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 5}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Assume $X$ is a preemptive scheduler; there exists a batch scheduler $S$ such that $\text{avgResp}(\text{batch}) \leq \text{avgResp}(X)$ (0 context switch overhead).
+  \item Therefore SJF is also optimal among preemptive schedulers.
+  \item RR is up to 2 times slower than SJF.
+  \item SRTF is like SJF but uses preemption, making it optimal.
+  \item Whenever a job terminates or arrives, SRTF schedules the job with the least remaining time.
+  \item Selfish RR: new processes are in a FIFO queue and old ones are scheduled using RR. Processes age as well. New processes are scheduled to run when there are no old ones ready to run, or when the newer processes age and become old. Faster aging is RR and slower aging is FCFS.
+  \item Priority schedulers / general-purpose OS: running more decreases priority and running less increases it. That is why I/O-bound processes get higher priorities.
+  \item Generally, general-purpose OSes use multi-level priority queues. The queue consists of multiple queues; those at the top have a higher priority and each queue uses RR. Processes move between queues. In some schedulers higher queues are given a shorter quantum.
+  \item In POSIX each task is associated with one of three scheduling policies: RR, FIFO, and other. RR and FIFO are real-time policies. The default policy is typically a multi-level priority queue with a negative feedback loop.
+  \item Real-time tasks are favored.
+  \item When the quantum of all runnable tasks reaches 0, the CPU allocates more time to all tasks, essentially starting a new epoch.
+  \item Tasks have an integer associated with their priority level. Higher value means higher priority. It is composed of two main numbers: dynamic priority -- controlled by the OS (remaining time and current priority) -- and static priority, which can be changed by the user using \texttt{nice()} or \texttt{sched\_setscheduler()}. It affects the max quantum for the task.
+  \item When the task's dynamic priority reaches 0, the CPU is yielded.
+  \item The OS gets a timer interrupt every $1/\text{HZ}$ seconds $= 10$ milliseconds; typically $\text{HZ} = 100$.
+  \item Dynamic priority's units are ticks.
+  \item Every \texttt{task\_struct} has 5 fields: \texttt{counter}, \texttt{mm}, \texttt{processor}, \texttt{nice}, \texttt{need\_resched}.
+  \item Kernel's nice is between 1 and 40, is 20 by default, and can be changed using \texttt{nice} and \texttt{sched\_setscheduler}.
+  \item User's nice is between $-20$ and $19$.
+  \item Kernel nice $=$ user nice $+ 20$.
+  \item \texttt{goodness(task, cpu)} determines how desirable a task is to a CPU.
+  \item \texttt{reschedule\_task} reschedules, preferably on an idle core, but preempts if there is none.
+  \item I/O-bound tasks by default have a tick counter of 12 ticks.
+  \item If the task is I/O-bound it converges to $2\alpha$.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Tutorial 5}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item How does SRTF work? When a new job arrives, the algorithm checks if the time it needs or any of the other jobs in the queue is less than the time the current running job needs, and if that is the case it preempts it. SRTF is optimal when context switch time is 0.
+  \item We can modify SRTF such that it is also applicable for I/O processes. That can be achieved by cutting up the processes that need I/O into segments.
+  \item I/O-bound processes are more interested in wait times. CPU-bound processes are more interested in response times.
+  \item SJF and SRTF are not good when it comes to wait time.
+  \item Quantums must be a multiple of $1/\text{HZ}$.
+  \item Only root users can define processes as real-time.
+  \item Real-time processes need a quick response time whereas regular processes do not.
+  \item If there are real-time processes in the system ready to run, the algorithm chosen is the scheduling algorithm for real-time processes; otherwise, it is the other one.
+  \item The algorithm for scheduling processes: there is a multi-level queue. The higher a task is the lower its priority. Each task has a scheduling policy set by \texttt{sched\_setscheduler}.
+  \item When the policy is FIFO, the process will never yield the CPU unless: there is a higher-priority real-time process waiting to run, it calls the syscall \texttt{yield}, or it is using I/O.
+  \item New processes or processes that have been unblocked will be sent to the back of the line of their respective priority level.
+  \item Timeslice: $100 \times \text{HZ} / 1000$.
+  \item CFS scheduler: achieves both efficiency when making a decision about who to run next and scalability.
+  \item It is fair in the sense that it gives all processes an equal amount of time (up to priority level).
+  \item Virtual runtime: when a process runs it accumulates virtual runtime. CFS will choose the process with the lowest virtual runtime. It keeps track of the max and min virtual runtimes.
+  \item The algorithm will dedicate \texttt{sched\_latency}/N time to each process.
+  \item CFS is like RR but with a dynamic quantum time.
+  \item Once a process depletes its quantum, CFS chooses the process with the lowest virtual runtime.
+  \item There is a minimum quantum time of 6 ms.
+  \item CFS keeps a red-black tree ordered according to virtual runtime. When new processes are added they are inserted with the max virtual runtime.
+  \item When a process sleeps or is blocked it is removed from the tree, and when it wakes up it is re-added with the min virtual runtime.
+  \item CFS also allows for an uneven distribution between processes using \texttt{nice}. The nicer the process is, the lower its priority.
+  \item $vr \mathrel{+}= \frac{w_0}{w_i} \cdot \Delta t$
+  \item $Q_i = \frac{w_i}{\sum_j w_j} \cdot \texttt{sched\_latency}$
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 6}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item When the outcome of a program is not deterministic due to the timing of certain events, we say that there exists a race condition.
+  \item Shared (global) variables/structures (in the case of threads) need to be monitored/fenced/protected.
+  \item Atomic operations / critical section -- ensures no partial results. Critical sections do not have to be the same code across all threads.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Tutorial 6}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Cons of context switch: bad utilization.
+  \item When we want to preempt a program, it is done because an alarm interrupt has been fired. This is handled in the OS, and so as part of handling the alarm interrupt we can also context switch while we are in the kernel.
+  \item \texttt{schedule()} is the only way to context switch in Linux.
+  \item The only way to enter the OS is through interrupts or syscalls.
+  \item Context switching does not require loading certain memory address spaces or anything, only changing the ones we are working with. Using \texttt{cr3} -- that is where the process's memory is.
+  \item Where is the process's context? The stack, heap, PCB, and all are already in the memory and as per point 5 we would not need to reload them. We do, however, need to back up and restore the registers. The backing up and restoration is done in both the kernel stack and the \texttt{thread} field in the PCB. Also the base of the process's kernel stack in \texttt{TSS.sp0}.
+  \item When a process is interrupted via an interrupt, the context is saved on the kernel stack. The kernel stack of the current process is saved in \texttt{TSS.sp0}.
+  \item Registers are per-CPU.
+  \item TSS is per-CPU, pointed to by the TR register, and is saved in kernel memory.
+  \item In the \texttt{thread} struct in the PCB there exists a field that points to the top of the kernel stack of the process, called \texttt{rsp}.
+  \item What we actually want to do is switch between the kernel stacks of the processes.
+  \item Context switch phases: \texttt{\_\_switch\_to\_asm} (for registers) $\to$ \texttt{switch\_to} (for TSS). In \texttt{switch\_to}: first we switch the \texttt{mm} and then we switch registers. \texttt{\_\_switch\_to\_asm} has to save the registers (ABI) and then swap the previous \texttt{rsp} with the next \texttt{rsp} in the \texttt{thread} field.
+  \item By convention, the \texttt{rsp} of next is going to point at the saved registers (next has undergone a context switch in the past so its stack will look similar: registers $\to$ return address $\to$ context switch $\to$ schedule).
+  \item Then using the new \texttt{rsp}, \texttt{\_\_switch\_to\_asm} restores next's registers and jumps to \texttt{switch\_to}, which restores \texttt{TSS.sp0} and then returns.
+  \item In the case of the first ever process: \texttt{do\_fork} simulates a context switch's behavior. Saves the registers on its stack like \texttt{\_\_switch\_to\_asm} would, using the structs \texttt{pt\_regs} and \texttt{inactive\_task\_frame}.
+  \item What \texttt{do\_exit} does: releases all of the memory and files, etc. Saves exit code in \texttt{exit\_code} in the PCB. Updates family relations and assigns children to init. Changes the task's status to zombie. Calls \texttt{schedule()}.
+  \item \texttt{wait} actually deletes the process altogether using \texttt{release\_task}.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 7}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Locks are implemented using hardware.
+  \item Spinlocks: will spin until they acquire the lock or until they are preempted (\texttt{while} loop).
+  \item When we are trying to acquire a spinlock, we disable interrupts.
+  \item Do we need to disable interrupts? In a uni-core system: yes, in case the handlers use synchronized structures. In a multi-core system: no.
+  \item Spinlocks: only use if we are spinning for a short period of time and the context switch time is greater.
+  \item Semaphores do not have to be released by the locking thread.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Tutorial 7}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Because threads are essentially processes, they have PCBs and PIDs. The PID of the main thread can be accessed using \texttt{getpid()}. It is stored in the PCB (\texttt{tgid}). In the PCB there is also a list of all the threads. Use \texttt{gettid()} to get the thread ID.
+  \item We use \texttt{clone} to create threads.
+  \item C statements are oftentimes not atomic, so a context switch can happen in the middle of one.
+\end{enumerate}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item Why does \texttt{kill} impact everything? If the process receives a signal, who deals with it?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Lecture 8}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Networking consists of 5 layers. Layer 5 (top): SSH and HTTP. Layer 4: TCP/UDP. Layer 3: IP. Layer 2: Ethernet. Layer 1: hardware. Layers 2--4 are in the kernel; Layer 5 is user space; Layer 1 is hardware.
+  \item L1: hardware. L2: data link. L3: network. L4: transport. L5: application.
+  \item L5 is determined by the application.
+  \item What is sent is not always fully received, mostly because it is too big for the buffers in networks.
+  \item Networks might mess up the order of messages.
+  \item L4 is typically implemented by the kernel (TCP, UDP, ...).
+  \item TCP is used because it cares about loss and reordering. It ensures that all bytes arrive in the correct order. Needs to establish a connection.
+  \item TCP splits bytes into segments. When a segment is received it needs to be acknowledged. Segments that have not been acknowledged are resent. Transmission is slowed down by the receiver when a lot of segments are missing, and gradually speeds up (congestion/flow control). The sender is forbidden to send more than what the buffer can hold.
+  \item There are congestion control algorithms: BBR, Cubic, Reno. BBR (by Google) has sharper drops but they are less frequent.
+  \item Cubic has more frequent drops but they are less sharp.
+  \item Reno has both frequent and sharp drops.
+  \item UDP does not care -- the opposite of TCP.
+  \item UDP uses datagrams or chunks. Per-chunk integrity. Simpler, low latency, no flow control, no need to establish a connection.
+  \item Domain names/hostnames are translated to IP addresses. IPv4: 32-bit address. IPv6: 128-bit address.
+  \item DNS helps translate domain names to IP addresses.
+  \item Each IP is associated with one host, whereas a host can have multiple IPs.
+  \item IP is implemented by the IP protocol.
+  \item Parties communicate through sockets, which are file descriptors created using \texttt{socket()}. Functions: \texttt{send()}, \texttt{recv()}, \texttt{sendmsg()}, \texttt{recvmsg()}.
+  \item Hosts can have multiple communicating processes that use different sockets, and that is what ports are for. Ports are 16-bit unsigned integers. Each chunk is associated with a port and an IP.
+  \item Ports below 1024 are reserved.
+  \item Socket unique identifier: 5-tuple (source IP, source port, dest IP, dest port, TCP/UDP).
+  \item \texttt{tcp\_establish} -- server; \texttt{tcp\_connect} -- client. Both need to use \texttt{getaddrinfo} and invoke \texttt{socket()} using the addrinfo. \texttt{getaddrinfo(host, client, input, output)}.
+  \item Local area network (LAN): devices are connected, each device has a NIC which is connected to a switch. LAN devices are nodes. They use Ethernet as a protocol to communicate with each other.
+  \item Ethernet is both an L1 and L2 protocol. Byte chunks in L2 are called frames.
+  \item Ethernet does not need a connection and can be lossy.
+  \item There is no connection between Ethernet and TCP/UDP.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 9}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item The OS caches disk content in RAM. When a process writes to disk content that is cached in RAM, the OS writes it to RAM and it is later synced to the disk.
+  \item This area that caches disk data is called the page cache.
+  \item Pages and frames have the same size $2^k$.
+  \item Typically $k = 12$, therefore $|\text{page}| = 4$ KB.
+  \item Pages can reside in memory, on disk, or be unallocated entirely.
+  \item For each virtual address, we divide it into two parts: the page and the offset. The page is what gets translated to a physical frame and the offset is just the offset. This results in a PA of [frame][offset].
+  \item Each process has a page address table. It has bits and the frame that the page is translated to, with $2^{32}/2^{12} = 2^{20}$ entries in the case of $k = 12$.
+  \item Upon each access to memory, the access mode should be checked.
+  \item The OS will produce a major page fault in the case that a page residing on disk is accessed.
+  \item The CPU discovers major page faults (valid bit $= 0$) and cannot do anything about it on its own, so it fires an interrupt to the OS. The OS then executes the handler for the fault, suspends the faulting process, and context switches. When handling is complete, the suspended process becomes runnable and the operation is restarted.
+  \item With minor page faults, the process remains runnable and there is no need to access the drive (COW, lazy memory allocation, reading a file already in the page cache).
+  \item \texttt{mmap}: maps a file to the address space of a process. The file becomes an array of bytes. Using the write flags makes writing/reading to/from the array simulate writing/reading to/from a file. It is durable on disk ``soon'' (in batches). Can use the \texttt{sync} function.
+  \item \texttt{mmap} makes the relevant array pages point to the pages in the page cache. All I/O operations go through the page cache.
+  \item Pros of using it: saves overhead cost of constantly using \texttt{write} or \texttt{read}. Zero-copy.
+  \item Anonymous pages are allocated to the heap or stack. They are not file pages.
+  \item \texttt{MAP\_SHARED} -- affects the file. \texttt{MAP\_PRIVATE} -- does not affect the file.
+  \item Paging or swapping: when we spill a page onto disk. Swap space is a space on disk for swapped pages. Only holds anonymous pages.
+  \item On-demand paging: pages start out on disk and are swapped in if they are being accessed for the first time. Also works for anonymous memory mapping.
+  \item $ws_p(k)$: the pages accessed by $p$ in the last $k$ accesses. These are called the working set.
+  \item Thrashing is when we overcommit too much memory and the system will just be handling faults with nothing getting done.
+  \item Readahead: swapping in additional pages that have not actually been demanded.
+  \item TLB caches recent VA-to-PA translations.
+  \item Processes do not know that the TLB exists.
+  \item Hardware fills the TLB.
+  \item The OS can invalidate entries in the TLB.
+  \item Victim pages are the pages that need to be swapped out.
+  \item The process of swapping out pages is typically done using a daemon. When the number of free pages surpasses a certain threshold it slows down, otherwise it speeds up.
+  \item The clock algorithm for swapping out pages: a bit says ``was this accessed since the last time I checked''. Periodically (every $n$ seconds) that bit is zeroed. We keep a pointer to the page we last checked. The first page for which the bit value is 0 is the victim page. As we iterate we zero the bits that are 1. (LRU approximation.)
+  \item NRU is like LRU but prefers keeping dirty pages. It adds another bit for whether the page is dirty.
+\end{enumerate}
+
+\subsection*{Questions}
+
+\begin{itemize}
+  \item Do frames and pages need to have the same size?
+\end{itemize}
+
+%---------------------------------------------------------------------
+\section{Tutorial 9}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item UDP provides a basic protection: if the data arrives it is most likely complete.
+  \item Use UDP when latency is what matters.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Tutorial 10}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item Cons of using physical addresses: fragmentation and security.
+  \item External fragmentation is when there is enough space in memory collectively but it is scattered and does not serve us. Internal fragmentation is the overhead of managing the allocation and its metadata and/or alignment.
+  \item Demand paging: only actually allocating memory when it is about to be used.
+  \item Deduplication: when two or more processes are reading the same data.
+  \item Copy-on-write: prevents over-copying.
+  \item Paging in 32-bit: $|\text{frame}| = |\text{page}| = 4 \text{ KB} = 2^{12}$. There are $2^{32}/2^{12} = 2^{20}$ pages in virtual memory (and frames in physical memory) $= 1$ M.
+  \item Each process has a page table that translates page addresses to frame addresses.
+  \item In the page table we also mark the access mode of the page.
+  \item Hierarchical page table: to know how many pages there are in each block we divide the frame size by the page entry size. We need to know how many pages there are in each block to determine the size of the top layer of the page global directory. Higher levels in the tree mean division, not modulo.
+  \item The hierarchical page table is called a page global directory (PGD). Entries in it are called PDEs.
+  \item \texttt{cr3} points to the page table.
+  \item If \texttt{present} $= 1$ the page is in memory. If \texttt{present} $= 0$ the page is either unallocated or is in the swap space on disk.
+  \item The CPU while translating will look in the TLB first and then will attempt to translate.
+  \item The OS has to invalidate addresses in the TLB when needed and when a context switch happens.
+  \item When should the OS not invalidate the TLB? When the thread to run next has the same \texttt{mm} as the currently running one, and/or if the thread about to run is a kernel thread. The kernel does not have a page table of its own and so uses the page table of the currently running process. Moreover, threads work on the kernel stack.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Lecture 11}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item In the entries of the PGD there exists the global bit: it helps the OS identify which of these are OS pages so it can keep them in the TLB.
+  \item Hardware vs OS: hardware is responsible for the structures, amount of bits, etc., and the OS is what fills those bits. In addition, hardware does the page walk and sets the accessed and dirty bits; the OS turns these off.
+  \item Syncing and invalidating TLBs -- OS. Populating TLBs -- hardware.
+\end{enumerate}
+
+\subsection*{Tutorial 11}
+
+(No notes.)
+
+%---------------------------------------------------------------------
+\section{Lecture 12}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item We want hard drives to be robust and reliable.
+  \item We need an abstraction, and that is what the filesystem is for.
+  \item Writes to files should be atomic to readers (either everything or nothing at all).
+  \item Hard links vs soft links: when creating a hard link a pointer to the file is created, and soft links create a new file that has the path to the file they are linked to.
+  \item Files have reference counts, and when a reference count reaches 0 the file should be removed. But if there are processes that have file descriptors referencing the file, the contents are not really removed until all references are removed as well.
+  \item Hard links to directories are not allowed.
+  \item \texttt{.} and \texttt{..} are hard links.
+  \item Soft links can be broken, are not counted as part of the reference count, and can point to files outside the system and to directories as well.
+\end{enumerate}
+
+%---------------------------------------------------------------------
+\section{Tutorial 13}
+%---------------------------------------------------------------------
+
+\begin{enumerate}
+  \item The name of the file is not kept in the inode -- only in the directory in which the file exists.
+\end{enumerate}
+
+\end{document}
