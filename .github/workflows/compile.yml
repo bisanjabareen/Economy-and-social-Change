@@ -20,7 +20,7 @@ jobs:
         with:
           root_file: src/logic_for_cs.tex
           latexmk_use_xelatex: true
-          pre_compile: apt-get update -qq && apt-get install -y fonts-culmus
+          pre_compile: fc-cache -fv
 
       - name: Upload PDF to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
