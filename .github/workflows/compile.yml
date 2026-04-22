@@ -11,7 +11,9 @@ jobs:
       - name: Compile LaTeX document # The Logic (Step 3)
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: src/summary.tex # Make sure your file is named main.tex
+          root_file: |
+            src/operating_systems.tex
+            src/economy_and_social_change.tex
 
       - name: Upload PDF to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -19,5 +21,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
           include_files: |
-            summary.pdf
+            operating_systems.pdf
+            economy_and_social_change.pdf
             index.html
